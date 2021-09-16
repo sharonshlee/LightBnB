@@ -1,5 +1,4 @@
 $(() => {
-
   const $propertyListings = $(`
   <section class="property-listings" id="property-listings">
       <p>Loading...</p>
@@ -21,10 +20,10 @@ $(() => {
     clearListings();
     for (const propertyId in properties) {
       const property = properties[propertyId];
+      console.log(".>>>", property);
       const listing = propertyListing.createListing(property, isReservation);
       addListing(listing);
     }
   }
   window.propertyListings.addProperties = addProperties;
-
 });
