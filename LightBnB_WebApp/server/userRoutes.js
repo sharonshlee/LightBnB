@@ -25,6 +25,7 @@ module.exports = function (router, database) {
    */
   const login = function (email, password) {
     return database.getUserWithEmail(email).then((user) => {
+      console.log(">>>", user);
       if (bcrypt.compareSync(password, user.password)) {
         return user;
       }
@@ -53,6 +54,7 @@ module.exports = function (router, database) {
   });
 
   router.get("/me", (req, res) => {
+    console.log(req.session);
     const userId = req.session.userId;
     if (!userId) {
       res.send({ message: "not logged in" });
