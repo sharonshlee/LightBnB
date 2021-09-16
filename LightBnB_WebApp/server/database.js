@@ -1,6 +1,3 @@
-const properties = require("./json/properties.json");
-//const users = require("./json/users.json");
-
 const { Pool } = require("pg");
 
 const pool = new Pool({
@@ -26,10 +23,7 @@ const getUserWithEmail = function (email) {
       }
       return result.rows[0]; //return user that has that email address, one row
     })
-    .catch((err) => {
-      console.log("Error Login!", err);
-      err.message;
-    });
+    .catch((err) => err.message);
 };
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -52,9 +46,7 @@ const getUserWithId = function (id) {
       }
       return result.rows[0]; // return user with that id, one row
     })
-    .catch((err) => {
-      err.message;
-    });
+    .catch((err) => err.message);
 };
 exports.getUserWithId = getUserWithId;
 
@@ -64,14 +56,14 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser = function (user) {
-  const queryString = `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *`;
+  const queryString = `INSERT INTO users (name, email, password) 
+                                  VALUES ($1, $2, $3) 
+                                  RETURNING *`;
   const values = [user.name, user.email, user.password];
   return pool
     .query(queryString, values)
     .then((result) => result.rows) //return * users
-    .catch((err) => {
-      err.message;
-    });
+    .catch((err) => err.message);
 };
 exports.addUser = addUser;
 
@@ -91,13 +83,8 @@ const getAllReservations = function (guest_id, limit = 10) {
   const values = [guest_id, limit];
   return pool
     .query(queryString, values)
-    .then((result) => {
-      console.log(result.rows);
-      return result.rows;
-    }) //return * reservations
-    .catch((err) => {
-      console.log(err.message);
-    });
+    .then((result) => result.rows) //return * reservations
+    .catch((err) => err.message);
 };
 exports.getAllReservations = getAllReservations;
 
@@ -114,11 +101,11 @@ const getAllProperties = (options, limit = 10) => {
   const queryParams = [];
   // 2
   let queryString = `
-  SELECT properties.*, avg(property_reviews.rating) as average_rating
-  FROM properties
-  JOIN property_reviews ON properties.id = property_id
-  WHERE 1=1 
-  `;
+                    SELECT properties.*, avg(property_reviews.rating) as average_rating
+                    FROM properties
+                    JOIN property_reviews ON properties.id = property_id
+                    WHERE 1=1 
+                    `;
 
   // 3
   if (options.city) {
@@ -149,10 +136,10 @@ const getAllProperties = (options, limit = 10) => {
   // 4
   queryParams.push(limit);
   queryString += `
-  GROUP BY properties.id
-  ORDER BY cost_per_night
-  LIMIT $${queryParams.length};
-  `;
+                  GROUP BY properties.id
+                  ORDER BY cost_per_night
+                  LIMIT $${queryParams.length};
+                  `;
 
   // 5
   console.log(queryString, queryParams);
